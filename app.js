@@ -1,5 +1,7 @@
 // При запросе на url : 'http://localhost:8000/echo?message=FUCK' , на странице будет слово 'FUCK' или любое другое которое подставить в url поcле 'http://localhost:8000/echo?message='
 // Если не указывать /echo?message= , то на ответ на странице будет "NO INFORMATION"
+
+// Модули Nodejs http и url
 const http = require("http");
 const url = require("url");
 
@@ -10,6 +12,7 @@ const host = "localhost";
 const port = 8000;
 
 const requestListener = (req, res) => {
+    // аргумент true, разберет  строку query в объект
     const urlParsed = url.parse(req.url, true);
     if (urlParsed.pathname == "/echo" && urlParsed.query.message) {
         res.writeHead(200);

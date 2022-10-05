@@ -24,7 +24,9 @@ const requestListener = (req, res) => {
 };
 
 const server = http.createServer(requestListener);
-
+// После создания сервера мы должны привязать его к сетевому адресу.
+// Для этого мы используем метод server.listen(). Он принимает три аргумента: port, host и функцию обратного вызова, срабатывающую, когда сервер начинает прослушивание.
 server.listen(port, host, () => {
+    // регистрируем в нашей консоли сообщение о том, что сервер начал прослушивать соединения.
     console.log(`Server is running on http://${host}:${port}`);
 });

@@ -1,32 +1,31 @@
-// При запросе на url : 'http://localhost:8000/echo?message=FUCK' , на странице будет слово 'FUCK' или любое другое которое подставить в url поcле 'http://localhost:8000/echo?message='
-// Если не указывать /echo?message= , то на ответ на странице будет "NO INFORMATION"
-
-// Модули Nodejs http и url
 const http = require("http");
-const url = require("url");
-
-//  localhost — это специальный частный адрес, с помощью которого компьютеры ссылаются на себя.
-// Обычно оно эквивалентно внутреннему IP-адресу 127.0.0.1 и доступно только локальному компьютеру, но недоступно Интернету или локальным сетям, к которым подключен компьютер.
+const { parse } = require("querystring");
 const host = "localhost";
 // Порт — это числовое значение, которое серверы используют как точку доступа IP-адресу.
 const port = 8000;
 
 const requestListener = (req, res) => {
-    // аргумент true, разберет  строку query в объект
-    const urlParsed = url.parse(req.url, true);
-    if (urlParsed.pathname == "/echo" && urlParsed.query.message) {
-        res.writeHead(200);
-        res.end(urlParsed.query.message);
-    } else {
-        res.writeHead(404);
-        res.end("NO INFORMATION");
-    }
+    let result = "";
+    let body = "";
+    req.on("data", (chunk) => {
+        body += chunk.toString();
+    });
+    req.on("end", () => {
+        let params = parse(body);
+        result = params.say;
+
+        res.writeHead(200, { "Content-Type": "text/html; charset=utf8" });
+        res.end(
+            '<form method="post"> <div> <label for="say"> Какой ответ ты ждешь ? </label> <input type="text" name="say"> <p><input type="submit"></p></div>' +
+                "Ответ: " +
+                result
+        );
+    });
 };
 
 const server = http.createServer(requestListener);
-// После создания сервера мы должны привязать его к сетевому адресу.
-// Для этого мы используем метод server.listen(). Он принимает три аргумента: port, host и функцию обратного вызова, срабатывающую, когда сервер начинает прослушивание.
 server.listen(port, host, () => {
-    // регистрируем в нашей консоли сообщение о том, что сервер начал прослушивать соединения.
     console.log(`Server is running on http://${host}:${port}`);
 });
+// После создания сервера мы должны привязать его к сетевому адресу.
+// Для этого мы используем метод server.listen(). Он принимает три аргумента: port, host и функцию обратного вызова, срабатывающую, когда сервер начинает прослушивание.
